@@ -1,14 +1,15 @@
-version: '3.8'
+
 
 services:
+
   mysql-db:
     image: mysql:latest
     container_name: mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: jruiz
-      MYSQL_PASSWORD: password123
-      MYSQL_DATABASE: mysql-db
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PWD}
     ports:
       - "3306:3306"
     volumes:
@@ -20,9 +21,24 @@ services:
     depends_on:
       - mysql-db
     environment:
-      PMA_HOST: mysql-db
+      - PMA_HOST=${PMA_HOST}
+      - PMA_PORT=${PMA_PORT}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "8081:80"
+
+  docker-project:
+    image: 165.22.188.113:8085/docker-project:1.2-SNAPSHOT
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PWD=${DB_PWD}
+      - DB_SERVER=${DB_SERVER}
+      - DB_NAME=${DB_NAME}
+    ports:
+    - 8080:8080
+    container_name: docker-project
+    depends_on:
+      - mysql-db
 
 volumes:
   mysql-data:
